@@ -12,8 +12,9 @@ xargs -a packages.txt sudo apt-get install -y
 echo "Press Enter to continue..."
 read dummy
 
-echo "==============================================Stowing dotfiles============================================="
-stow zshrc vimrc tmux i3 fonts alacritty
+echo "==============================================Copying dotfiles============================================="
+cp zshrc/* ~
+cp vimrc/* ~
 
 echo "Press Enter to continue..."
 read dummy
@@ -37,43 +38,6 @@ fi
 echo "Press Enter to continue..."
 read dummy
 
-echo "==============================================Installing Alacritty============================================="
-if command -v alacritty > /dev/null 2>&1
-then
- 	echo "Alacritty already installed"
-else
- 	echo "Installing rust and Alacritty"
- 	curl https://sh.rustup.rs -sSf | sh -s -- -y
-	source ~/.bashrc
- 	cargo install alacritty
-
- 	# Setting alacritty as default shell: https://gist.github.com/aanari/08ca93d84e57faad275c7f74a23975e6?permalink_comment_id=3822304
- 	sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator $(which alacritty) 50
-	sudo update-alternatives --config x-terminal-emulator
-fi
- 
-echo "Press Enter to continue..."
-read dummy
-
-echo "==============================================Updating fonts============================================="
-fc-cache -f -v
-
-echo "Press Enter to continue..."
-read dummy
-
-echo "==============================================Installing pyenv============================================="
-if [ ! -d "$HOME/.pyenv" ]; then
-	echo "Cloning pyenv and pyenv-virtualenv"
-	curl -fsSL https://pyenv.run | bash
-	git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
-else
-	echo "Pyenv already installed"
-fi
-
-echo "Press Enter to continue..."
-read dummy
-
-
 echo "==============================================Installing lazygit============================================="
 if command -v lazygit &> /dev/null; then
 	echo "Lazygit is already installed"
@@ -83,38 +47,6 @@ else
 	tar xf lazygit.tar.gz lazygit
 	sudo install lazygit -D -t /usr/local/bin/
 	rm lazygit*
-fi
-
-echo "Press Enter to continue..."
-read dummy
-
-echo "==============================================Installing docker============================================"
-if ! command -v docker > /dev/null 2>&1
-then
-	# Add Docker's official GPG key:
-	sudo apt-get update -y
-	sudo apt-get install ca-certificates curl -y
-	sudo install -m 0755 -d /etc/apt/keyrings
-	sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-	sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-	# Add the repository to Apt sources:
-	echo \
-	  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-	  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-	  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-	sudo apt-get update -y
-
-	sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-	sudo groupadd docker
-	sudo usermod -aG docker $USER
-	newgrp docker
-
-	sudo systemctl enable docker.service
-	sudo systemctl enable containerd.service
-else
-	echo "Docker is already installed" 
 fi
 
 echo "Press Enter to continue..."
