@@ -115,7 +115,14 @@ source $ZSH/oh-my-zsh.sh
 # Aliases
 source ~/.zsh_aliases
 
-# Cuda setup
+# Env sorcery for c++ compilation
 export CUDA_HOME=/usr/local/cuda-12.6
+export CC=/usr/bin/gcc
+export CXX=/usr/bin/g++
 export PATH=$CUDA_HOME/bin:$PATH
 export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+
+# Enable ros2 autocomplete
+eval "$(register-python-argcomplete3 ros2)"
+eval "$(register-python-argcomplete3 colcon)"
+
